@@ -142,5 +142,5 @@ allure serve allure-results
 ## Git clone
 
 ```
-git clone https://github.com/nishigandhap/datavisyn_QA/tree/main
+git clone https://github.com/nishigandhap/datavisyn_QA
 ```
