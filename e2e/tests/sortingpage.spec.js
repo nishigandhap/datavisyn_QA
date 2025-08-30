@@ -17,8 +17,7 @@ test.describe('Sorting tests', () => {
     })
 
 
-    test('Verify that the column sorting is retained after applying filters.', async ({ page, sortingPage }) => {
-        const filterPage = new FilterPage(page);
+    test('Verify that the column sorting is retained after applying filters.', async ({ page, sortingPage, filterPage }) => {
         await sortingPage.verifySortingRetentionAfterFilter('First Name', filterPage)
     })
 })
