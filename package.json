@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-   "reportTest": "npx playwright test"
+    "reportTest": "npx playwright test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@chromatic-com/playwright": "^0.12.7",
     "@playwright/test": "^1.54.2",
     "@types/node": "^24.2.1",
-    "allure-playwright": "^3.3.3"
+    "allure-playwright": "^3.3.3",
+    "chromatic": "^13.1.4"
   }
 }

@@ -1,5 +1,6 @@
 const { test } = require('../base/baseTest.js')
 
+
 test.describe('Search Page Tests', () => {
 
   test.beforeEach(async ({ page }) => {

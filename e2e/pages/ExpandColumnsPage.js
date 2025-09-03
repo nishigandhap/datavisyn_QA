@@ -1,4 +1,5 @@
-const { expect } = require('@playwright/test');
+//const { expect } = require('@playwright/test');
+const { expect } = require('@chromatic-com/playwright')
 
 const { valid, invalid } = require('../fixtures/custom-fixtures');
 const { ValidCity, ValidState, ValidZip, ValidPhone } = valid;

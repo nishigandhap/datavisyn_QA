@@ -1,4 +1,5 @@
-const { expect } = require('@playwright/test');
+//const { expect } = require('@playwright/test');
+const { expect } = require('@chromatic-com/playwright')
 
 class HideColumnsPage {
     constructor(page) {

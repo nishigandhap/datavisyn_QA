@@ -1,5 +1,6 @@
-const { expect } = require('@playwright/test');
+//const { expect } = require('@playwright/test');
 const FilterPage = require('../pages/FilterPage')
+const { expect } = require('@chromatic-com/playwright')
 
 class SortingPage {
   constructor(page) {

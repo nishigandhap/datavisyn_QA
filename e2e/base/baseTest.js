@@ -1,4 +1,4 @@
-const { test: base } = require('@playwright/test')
+const { test: base } = require('@chromatic-com/playwright')
 
 const SearchPage = require('../pages/SearchPage.js')
 const SortingPage = require('../pages/SortingPage.js')

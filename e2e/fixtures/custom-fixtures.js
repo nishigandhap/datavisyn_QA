@@ -8,9 +8,11 @@ module.exports = {
     },
 
     invalid: {
-        InvalidCity: /[a-zA-Z]/,
-        InvalidState: /[a-zA-Z]/,
-        InvalidZip: /[a-zA-Z]/,
+
+        InvalidCity: /\d/,       // Invalid if contains a digit
+        InvalidState: /\d/,      // Invalid if contains a digit
+        InvalidZip: /[^0-9]/,    // Invalid if contains anything but numbers
         InvalidPhone: /[a-zA-Z]/
+
     }
 }
