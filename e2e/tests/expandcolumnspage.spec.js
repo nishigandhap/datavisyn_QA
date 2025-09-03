@@ -12,7 +12,7 @@ test.describe('Expand Columns Page Tests', () => {
 
    });
 
-   test.skip('Verify invalid data formats in expanded columns.', async ({ expandColumnsPage }) => {
+   test('Verify invalid data formats in expanded columns.', async ({ expandColumnsPage }) => {
       await expandColumnsPage.verifyInvalidExpandedColumnDataFormat();
    });
 
