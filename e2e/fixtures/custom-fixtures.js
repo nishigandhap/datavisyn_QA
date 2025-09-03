@@ -8,7 +8,7 @@ module.exports = {
     },
 
     invalid: {
-        InvalidCity: /^[A-Za-z\s]+$/,
+        InvalidCity: /[a-zA-Z]/,
         InvalidState: /[a-zA-Z]/,
         InvalidZip: /[a-zA-Z]/,
         InvalidPhone: /[a-zA-Z]/
