@@ -32,8 +32,11 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
-      run: npx playwright test --reporter=html
+    - name: Build Docker image
+      run: docker build -t playwright-tests .
+
+    - name: Run tests in Docker
+      run: docker run playwright-tests
 
     - name: Upload Playwright Report
       if: always()
