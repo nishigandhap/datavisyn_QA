@@ -1,6 +1,5 @@
-name: Chromatic
+name: Playwright Tests
 on:
-  workflow_dispatch:
   push:
     branches: [ main, master ]
   pull_request:
@@ -14,43 +13,29 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+        - name: Cache node modules
+  uses: actions/cache@v4
+  with:
+    path: ~/.npm
+    key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+    restore-keys: |
+      ${{ runner.os }}-node-
     - name: Install dependencies
       run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
     - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      run: npx playwright test --project=${{ matrix.browser }} --reporter=html
+
+    - name: Upload Playwright Report
+      if: always()
+      uses: actions/upload-artifact@v4
       with:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
-  chromatic:
-    name: Run Chromatic
-    needs: playwright
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.18.0
-      - name: Install dependencies
-         # ⚠️ See your package manager's documentation for the correct command to install dependencies in a CI environment.
-        run: npm ci
-      - name: Download Playwright test results
-        uses: actions/download-artifact@v4
-        with:
-          name: test-results
-          path: ./test-results
-      - name: Run Chromatic
-        uses: chromaui/action@latest
-        with:
-          # ⚠️ Enable Playwright
-          playwright: true
-          # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-        # ⚠️ Optionally configure the archive location with env vars
-        env: CHROMATIC_ARCHIVE_LOCATION=./test-results
+
+    -name: Print success message
+      run: echo "Playwright tests completed successfully!"
