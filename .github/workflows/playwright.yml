@@ -19,11 +19,11 @@ jobs:
 
       # Step 3: Build Docker Image
       - name: Build Docker Image
-        run: docker build -t nishipatil/playwright-tests:latest .
+        run: docker build -t nishipatil/playwright-tests:V1 .
 
       # Step 4: Push Docker Image
       - name: Push Docker Image
-        run: docker push nishipatil/playwright-tests:latest
+        run: docker push nishipatil/playwright-tests:V1
 
       # Step 5: Deploy to EC2 and run container
       - name: Deploy to EC2
