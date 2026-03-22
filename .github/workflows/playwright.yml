@@ -16,27 +16,30 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            echo "Cleaning old container and report..."
             sudo docker rm -f playwright-container || true
-            sudo docker pull nishipatil/playwright-tests:v3
+            rm -rf ~/playwright-report
+            mkdir -p ~/playwright-report
 
+            echo "Pulling latest image..."
+            sudo docker pull nishipatil/playwright-tests:v4
+
+            echo "Running container..."
             sudo docker run \
-            -v ~/playwright-report:/app/playwright-report \
-            --name playwright-container \
-            nishipatil/playwright-tests:v3
+              -v ~/playwright-report:/app/playwright-report \
+              --name playwright-container \
+              nishipatil/playwright-tests:v4
+
+            echo "Container logs:"
+            sudo docker logs playwright-container || true
 
             echo "===== DEBUG START ====="
-            echo "Current directory:"
-            pwd
-
-            echo "Home directory content:"
+            echo "Home directory:"
             ls -la ~
-            echo "Report folder content:"
-            ls -la ~/playwright-report
 
+            echo "Report folder:"
+            ls -la ~/playwright-report
             echo "===== DEBUG END ====="
-
-            echo "Checking report folder..."
-            ls -la ~/playwright-report
 
       - name: Copy report from EC2
         uses: appleboy/scp-action@v0.1.7

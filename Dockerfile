@@ -1,11 +1,9 @@
-FROM mcr.microsoft.com/playwright:v1.54.2-jammy
+FROM mcr.microsoft.com/playwright:v1.42.0-jammy
 
 WORKDIR /app
 
-COPY package.json package-lock.json* ./
-
-RUN npm ci
-
 COPY . .
+
+RUN npm install
 
 CMD ["npx", "playwright", "test", "--reporter=html"]
