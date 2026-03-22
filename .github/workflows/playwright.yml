@@ -39,10 +39,10 @@ jobs:
             sudo docker rm -f playwright-container || true
 
             echo "Pulling latest image..."
-            sudo docker pull nishipatil/playwright-tests:latest
+            sudo docker pull nishipatil/playwright-tests:V1
 
             echo "Running container..."
-            sudo docker run --name playwright-container nishipatil/playwright-tests:latest
+            sudo docker run --name playwright-container nishipatil/playwright-tests:V1
 
             echo "Container logs:"
             sudo docker logs playwright-container
