@@ -24,6 +24,17 @@ jobs:
             --name playwright-container \
             nishipatil/playwright-tests:v1
 
+            echo "===== DEBUG START ====="
+            echo "Current directory:"
+            pwd
+
+            echo "Home directory content:"
+            ls -la ~
+            echo "Report folder content:"
+            ls -la ~/playwright-report
+
+            echo "===== DEBUG END ====="
+
             echo "Checking report folder..."
             ls -la ~/playwright-report
 
