@@ -22,13 +22,13 @@ jobs:
             mkdir -p ~/playwright-report
 
             echo "Pulling latest image..."
-            sudo docker pull nishipatil/playwright-tests:v4
+            sudo docker pull nishipatil/playwright-tests:v1
 
             echo "Running container..."
             sudo docker run \
               -v ~/playwright-report:/app/playwright-report \
               --name playwright-container \
-              nishipatil/playwright-tests:v4
+              nishipatil/playwright-tests:v1
 
             echo "Container logs:"
             sudo docker logs playwright-container || true
