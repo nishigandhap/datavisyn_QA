@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "reportTest": "npx playwright test"
+   "test": "playwright test --reporter=html"
   },
   "keywords": [],
   "author": "",

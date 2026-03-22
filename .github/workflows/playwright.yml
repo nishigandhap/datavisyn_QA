@@ -17,12 +17,12 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker rm -f playwright-container || true
-            sudo docker pull nishipatil/playwright-tests:v1
+            sudo docker pull nishipatil/playwright-tests:v3
 
             sudo docker run \
             -v ~/playwright-report:/app/playwright-report \
             --name playwright-container \
-            nishipatil/playwright-tests:v1
+            nishipatil/playwright-tests:v3
 
             echo "===== DEBUG START ====="
             echo "Current directory:"
