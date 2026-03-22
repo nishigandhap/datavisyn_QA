@@ -17,12 +17,15 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             sudo docker rm -f playwright-container || true
-            sudo docker pull nishipatil/playwright-tests:latest
+            sudo docker pull nishipatil/playwright-tests:v1
 
             sudo docker run \
-              -v ~/playwright-report:/app/playwright-report \
-              --name playwright-container \
-              nishipatil/playwright-tests:latest
+            -v ~/playwright-report:/app/playwright-report \
+            --name playwright-container \
+            nishipatil/playwright-tests:v1
+
+            echo "Checking report folder..."
+            ls -la ~/playwright-report
 
       - name: Copy report from EC2
         uses: appleboy/scp-action@v0.1.7
@@ -30,7 +33,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "~/playwright-report"
+          source: "playwright-report"
           target: "./"
 
       - name: Upload Playwright Report

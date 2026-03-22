@@ -26,7 +26,7 @@ export default defineConfig({
   reporter: [
     ['list'],                  // console output
     ['allure-playwright'],     // Allure reporting
-    ['html']                   // optional HTML report
+    ['html', { outputFolder: 'playwright-report', open: 'never' }] // optional HTML report
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
