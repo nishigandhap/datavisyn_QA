@@ -19,11 +19,11 @@ jobs:
 
       # Step 3: Build Docker Image
       - name: Build Docker Image
-        run: docker build -t nishipatil/playwright-tests:V1 .
+        run: docker build -t nishipatil/playwright-tests:v1 .
 
       # Step 4: Push Docker Image
       - name: Push Docker Image
-        run: docker push nishipatil/playwright-tests:V1
+        run: docker push nishipatil/playwright-tests:v1
 
       # Step 5: Deploy to EC2 and run container
       - name: Deploy to EC2
@@ -39,10 +39,10 @@ jobs:
             sudo docker rm -f playwright-container || true
 
             echo "Pulling latest image..."
-            sudo docker pull nishipatil/playwright-tests:V1
+            sudo docker pull nishipatil/playwright-tests:v1
 
             echo "Running container..."
-            sudo docker run --name playwright-container nishipatil/playwright-tests:V1
+            sudo docker run --name playwright-container nishipatil/playwright-tests:v1
 
             echo "Container logs:"
             sudo docker logs playwright-container
