@@ -19,11 +19,11 @@ jobs:
 
       # Step 3: Build Docker Image
       - name: Build Docker Image
-        run: docker build -t nishipatil/playwright-tests:v1 .
+        run: docker build -t nishipatil/playwright-tests:v2 .
 
       # Step 4: Push Docker Image
       - name: Push Docker Image
-        run: docker push nishipatil/playwright-tests:v1
+        run: docker push nishipatil/playwright-tests:v2
 
       # Step 5: Deploy to EC2 and run container
       - name: Deploy to EC2
@@ -33,16 +33,43 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            set -e  # Exit immediately if any command fails
+            set -e
 
             echo "Cleaning old container..."
             sudo docker rm -f playwright-container || true
 
-            echo "Pulling latest image..."
-            sudo docker pull nishipatil/playwright-tests:v1
+            echo "Preparing report folder..."
+            rm -rf ~/playwright-report
+            mkdir -p ~/playwright-report
 
-            echo "Running container..."
-            sudo docker run --name playwright-container nishipatil/playwright-tests:v1
+            echo "Pulling latest image..."
+            sudo docker pull nishipatil/playwright-tests:v2
+
+            echo "Running container with report volume..."
+            sudo docker run \
+              -v ~/playwright-report:/app/playwright-report \
+              --name playwright-container \
+              nishipatil/playwright-tests:v2
 
             echo "Container logs:"
             sudo docker logs playwright-container
+
+            echo "Verify report exists:"
+            ls -la ~/playwright-report
+
+      # Step 6: Copy report from EC2 to GitHub runner
+      - name: Copy Playwright Report from EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: "~/playwright-report"
+          target: "./"
+
+      # Step 7: Upload report as artifact
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
