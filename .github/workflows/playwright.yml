@@ -39,10 +39,10 @@ jobs:
             sudo docker rm -f playwright-container || true
 
             echo "Cleaning old report folder..."
-            sudo rm -rf ~/playwright-report
+            sudo rm -rf /home/ubuntu/playwright-report
 
             echo "Preparing report folder..."
-            mkdir -p ~/playwright-report
+            mkdir -p /home/ubuntu/playwright-report
 
             echo "Pulling latest image..."
             sudo docker pull nishipatil/playwright-tests:v2
@@ -50,15 +50,15 @@ jobs:
             echo "Running container..."
             sudo docker run \
               --user root \
-              -v ~/playwright-report:/app/playwright-report \
+              -v /home/ubuntu/playwright-report:/app/playwright-report \
               --name playwright-container \
               nishipatil/playwright-tests:v2
 
             echo "Fixing permissions..."
-            sudo chmod -R 777 ~/playwright-report
+            sudo chmod -R 777 /home/ubuntu/playwright-report
 
-            echo "Verify report:"
-            ls -la ~/playwright-report
+            echo "FINAL DEBUG:"
+            ls -la /home/ubuntu/playwright-report
 
       # Step 6: Copy report from EC2 to GitHub runner
       - name: Copy Playwright Report from EC2
@@ -67,9 +67,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "/home/ubuntu/playwright-report"
+          source: "/home/ubuntu/playwright-report/*"
           target: "./"
-          strip_components: 1
 
       # Step 7: Upload report as artifact
       - name: Upload Playwright Report
