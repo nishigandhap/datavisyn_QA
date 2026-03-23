@@ -57,20 +57,33 @@ jobs:
             echo "Fixing permissions..."
             sudo chmod -R 777 /home/ubuntu/playwright-report
 
-            echo "FINAL DEBUG:"
+            echo "Verify report:"
             ls -la /home/ubuntu/playwright-report
 
-      # Step 6: Copy report from EC2 to GitHub runner
-      - name: Copy Playwright Report from EC2
+            echo "Zipping report..."
+            cd /home/ubuntu
+            tar -czf playwright-report.tar.gz playwright-report
+
+            echo "Zip created:"
+            ls -la /home/ubuntu/playwright-report.tar.gz
+
+      # Step 6: Copy ZIP from EC2
+      - name: Copy Report ZIP from EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "/home/ubuntu/playwright-report/*"
+          source: "/home/ubuntu/playwright-report.tar.gz"
           target: "./"
 
-      # Step 7: Upload report as artifact
+      # Step 7: Unzip report in runner
+      - name: Extract Playwright Report
+        run: |
+          tar -xzf playwright-report.tar.gz
+          ls -la
+
+      # Step 8: Upload report as artifact
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         with:
