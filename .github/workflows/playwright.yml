@@ -45,16 +45,16 @@ jobs:
             echo "Pulling latest image..."
             sudo docker pull nishipatil/playwright-tests:v2
 
-            echo "Running container with report volume..."
+            echo "Running container with volume mapping..."
             sudo docker run \
               -v ~/playwright-report:/app/playwright-report \
               --name playwright-container \
               nishipatil/playwright-tests:v2
 
-            echo "Container logs:"
-            sudo docker logs playwright-container
+            echo "Fixing permissions..."
+            sudo chmod -R 777 ~/playwright-report
 
-            echo "Verify report exists:"
+            echo "Verify report on EC2:"
             ls -la ~/playwright-report
 
       # Step 6: Copy report from EC2 to GitHub runner
