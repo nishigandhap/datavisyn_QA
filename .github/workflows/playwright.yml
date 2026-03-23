@@ -17,13 +17,17 @@ jobs:
       - name: Docker Login
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Set tag
+        id: vars
+        run: echo "TAG=$(date +'%Y-%m-%d-%H%M')-${GITHUB_SHA::7}" >> $GITHUB_ENV
+
       # Step 3: Build Docker Image
       - name: Build Docker Image
-        run: docker build -t nishipatil/playwright-tests:${{ github.sha }} .
+        run: docker build -t nishipatil/playwright-tests:${{ env.TAG }} .
 
       # Step 4: Push Docker Image
       - name: Push Docker Image
-        run: docker push nishipatil/playwright-tests:${{ github.sha }}
+        run: docker push nishipatil/playwright-tests:${{ env.TAG }}
 
       # Step 5: Deploy to EC2 and run container
       - name: Deploy to EC2
@@ -41,10 +45,10 @@ jobs:
             sudo docker rm -f playwright-container || true
 
             echo "Pulling latest image..."
-            sudo docker pull nishipatil/playwright-tests:${{ github.sha }}
+            sudo docker pull nishipatil/playwright-tests:${{ env.TAG }}
 
             echo "Running container..."
-            sudo docker run --name playwright-container nishipatil/playwright-tests:${{ github.sha }}
+            sudo docker run --name playwright-container nishipatil/playwright-tests:${{ env.TAG }}
 
             echo "Container logs:"
             sudo docker logs playwright-container
