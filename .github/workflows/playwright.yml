@@ -2,7 +2,7 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   deploy:
@@ -25,7 +25,7 @@ jobs:
       - name: Push Docker Image
         run: docker push nishipatil/playwright-tests:v2
 
-      # Step 5: Run on EC2
+      # Step 5: Deploy to EC2
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -35,16 +35,14 @@ jobs:
           script: |
             set -e
 
-            echo "Freeing space..."
             sudo docker system prune -a -f
-            sudo docker volume prune -f
 
             echo "Cleanup old container"
             sudo docker rm -f playwright-container || true
 
             echo "Cleanup old report"
             sudo rm -rf /home/ubuntu/playwright-report
-            sudo rm -f /tmp/report.tar.gz
+            sudo rm -f /home/ubuntu/report.tar.gz
 
             echo "Create report dir"
             mkdir -p /home/ubuntu/playwright-report
@@ -62,29 +60,22 @@ jobs:
             echo "Fix permissions"
             sudo chmod -R 777 /home/ubuntu/playwright-report
 
-            echo "VERIFY REPORT EXISTS"
-            ls -la /home/ubuntu/playwright-report
-
             echo "Create TAR"
             cd /home/ubuntu
             tar -czf report.tar.gz playwright-report
 
-            echo "Move TAR to /tmp (IMPORTANT)"
-            sudo mv report.tar.gz /tmp/report.tar.gz
-            sudo chmod 777 /tmp/report.tar.gz
+            echo "FINAL CHECK"
+            ls -la /home/ubuntu/report.tar.gz
 
-            echo "VERIFY TAR IN /tmp"
-            ls -la /tmp/report.tar.gz
-
-      # Step 6: Copy TAR file
+      # Step 6: Copy TAR file from EC2
       - name: Copy Report from EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "/tmp/report.tar.gz"
-          target: "./"
+          source: "report.tar.gz"
+          target: "/home/runner/work/${{ github.repository }}/"
 
       # Step 7: Extract TAR in GitHub runner
       - name: Extract Report
