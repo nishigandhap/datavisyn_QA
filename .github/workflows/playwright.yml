@@ -1,5 +1,3 @@
-
-
 name: Playwright Tests
 
 on:
@@ -36,15 +34,17 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             set -e
-            
+
+            echo "Freeing space..."
             sudo docker system prune -a -f
+            sudo docker volume prune -f
 
             echo "Cleanup old container"
             sudo docker rm -f playwright-container || true
 
             echo "Cleanup old report"
             sudo rm -rf /home/ubuntu/playwright-report
-            sudo rm -f /home/ubuntu/report.tar.gz
+            sudo rm -f /tmp/report.tar.gz
 
             echo "Create report dir"
             mkdir -p /home/ubuntu/playwright-report
@@ -65,21 +65,25 @@ jobs:
             echo "VERIFY REPORT EXISTS"
             ls -la /home/ubuntu/playwright-report
 
-            echo "Create TAR (IMPORTANT STEP)"
+            echo "Create TAR"
             cd /home/ubuntu
             tar -czf report.tar.gz playwright-report
 
-            echo "VERIFY TAR"
-            ls -la /home/ubuntu/report.tar.gz
+            echo "Move TAR to /tmp (IMPORTANT)"
+            sudo mv report.tar.gz /tmp/report.tar.gz
+            sudo chmod 777 /tmp/report.tar.gz
 
-      # Step 6: Copy TAR file (NO wildcard, NO folder)
+            echo "VERIFY TAR IN /tmp"
+            ls -la /tmp/report.tar.gz
+
+      # Step 6: Copy TAR file
       - name: Copy Report from EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "/home/ubuntu/report.tar.gz"
+          source: "/tmp/report.tar.gz"
           target: "./"
 
       # Step 7: Extract TAR in GitHub runner
