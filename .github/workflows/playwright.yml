@@ -25,7 +25,7 @@ jobs:
       - name: Push Docker Image
         run: docker push nishipatil/playwright-tests:v2
 
-      # Step 5: Deploy to EC2 and run container
+      # Step 5: Run on EC2
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -35,55 +35,56 @@ jobs:
           script: |
             set -e
 
-            echo "Cleaning old container..."
+            echo "Cleanup old container"
             sudo docker rm -f playwright-container || true
 
-            echo "Cleaning old report folder..."
+            echo "Cleanup old report"
             sudo rm -rf /home/ubuntu/playwright-report
+            sudo rm -f /home/ubuntu/report.tar.gz
 
-            echo "Preparing report folder..."
+            echo "Create report dir"
             mkdir -p /home/ubuntu/playwright-report
 
-            echo "Pulling latest image..."
+            echo "Pull latest image"
             sudo docker pull nishipatil/playwright-tests:v2
 
-            echo "Running container..."
+            echo "Run container"
             sudo docker run \
               --user root \
               -v /home/ubuntu/playwright-report:/app/playwright-report \
               --name playwright-container \
               nishipatil/playwright-tests:v2
 
-            echo "Fixing permissions..."
+            echo "Fix permissions"
             sudo chmod -R 777 /home/ubuntu/playwright-report
 
-            echo "Verify report:"
+            echo "VERIFY REPORT EXISTS"
             ls -la /home/ubuntu/playwright-report
 
-            echo "Zipping report..."
+            echo "Create TAR (IMPORTANT STEP)"
             cd /home/ubuntu
-            tar -czf playwright-report.tar.gz playwright-report
+            tar -czf report.tar.gz playwright-report
 
-            echo "Zip created:"
-            ls -la /home/ubuntu/playwright-report.tar.gz
+            echo "VERIFY TAR"
+            ls -la /home/ubuntu/report.tar.gz
 
-      # Step 6: Copy ZIP from EC2
-      - name: Copy Report ZIP from EC2
+      # Step 6: Copy TAR file (NO wildcard, NO folder)
+      - name: Copy Report from EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "/home/ubuntu/playwright-report.tar.gz"
+          source: "/home/ubuntu/report.tar.gz"
           target: "./"
 
-      # Step 7: Unzip report in runner
-      - name: Extract Playwright Report
+      # Step 7: Extract TAR in GitHub runner
+      - name: Extract Report
         run: |
-          tar -xzf playwright-report.tar.gz
+          tar -xzf report.tar.gz
           ls -la
 
-      # Step 8: Upload report as artifact
+      # Step 8: Upload report
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         with:
