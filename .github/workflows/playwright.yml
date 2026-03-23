@@ -38,14 +38,16 @@ jobs:
             echo "Cleaning old container..."
             sudo docker rm -f playwright-container || true
 
+            echo "Cleaning old report folder..."
+            sudo rm -rf ~/playwright-report
+
             echo "Preparing report folder..."
-            rm -rf ~/playwright-report
             mkdir -p ~/playwright-report
 
             echo "Pulling latest image..."
             sudo docker pull nishipatil/playwright-tests:v2
 
-            echo "Running container with volume mapping..."
+            echo "Running container..."
             sudo docker run \
               -v ~/playwright-report:/app/playwright-report \
               --name playwright-container \
@@ -54,7 +56,7 @@ jobs:
             echo "Fixing permissions..."
             sudo chmod -R 777 ~/playwright-report
 
-            echo "Verify report on EC2:"
+            echo "Verify report:"
             ls -la ~/playwright-report
 
       # Step 6: Copy report from EC2 to GitHub runner
